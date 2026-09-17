@@ -1,7 +1,6 @@
 # Banco de dados 
-CREATE DATABASE IF NOT EXISTS catalogomusica
+## CREATE DATABAS catalogomusica
 USE catalogomusica;
-
 CREATE TABLE IF NOT EXISTS musicas (
     id INT(11) NOT NULL,
     titulo VARCHAR(150) NOT NULL,

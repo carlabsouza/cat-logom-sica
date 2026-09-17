@@ -13,20 +13,20 @@ class Connection
 
     public static function getInstance(): PDO
     {
-        if(empty(self::$stmt)) {
+        if (empty(self::$stmt)) {
             try {
-                self::$stmt = new PDO ("mysql:host=" . DB_HOST . ";port" . DB_PORT . ";dbname=" . DB_NAME, DB_USER, DB_PASSWORD,
-                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_CASE => PDO::CASE_NATURAL]
-            );
+                self::$stmt = new PDO(
+                    "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME, DB_USER, DB_PASSWORD, [
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_CASE => PDO::CASE_NATURAL
+                    ]);
             } catch (PDOException $error) {
                 error_log($error->getMessage());
                 http_response_code(500);
                 die(json_encode($error->getMessage()));
             }
-                
-            }
-
-            return self::$stmt;
         }
+
+        return self::$stmt;
     }
+}

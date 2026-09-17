@@ -1,0 +1,261 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Rest de Músicas",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Servidor de desenvolvimento local da API"
+        }
+    ],
+    "paths": {
+        "/musicas": {
+            "get": {
+                "tags": [
+                    "Músicas"
+                ],
+                "summary": "Lista todas as músicas",
+                "operationId": "fde29c0c4aa83380bd77cd051f344d7d",
+                "responses": {
+                    "200": {
+                        "description": "Requisição concluída com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/musicas"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Erro ao listar músicas"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Músicas"
+                ],
+                "summary": "Cadastrar uma música",
+                "operationId": "4f33f4d79e97390f395200c5251b8f3a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MusicaInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Música cadastrada com sucesso"
+                    },
+                    "422": {
+                        "description": "Título e artista são obrigatórios"
+                    }
+                }
+            }
+        },
+        "/musicas/{id}": {
+            "get": {
+                "tags": [
+                    "Músicas"
+                ],
+                "summary": "Obter informações de uma música",
+                "operationId": "05cc2215fa65608ca4728b523ebef5d9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Informações da música obtidas com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/musicas"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Música não encontrada"
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Músicas"
+                ],
+                "summary": "Excluir uma música",
+                "operationId": "955f2ed0c3e26761420a0ea0267c1d05",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Música excluída com sucesso"
+                    },
+                    "404": {
+                        "description": "Música não encontrada"
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Músicas"
+                ],
+                "summary": "Atualizar uma música",
+                "operationId": "f0776374da51134b67c74e0ffcf079dd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Música atualizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/musicas"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Música não encontrada"
+                    },
+                    "422": {
+                        "description": "Tentativa de atualização com dados inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error422"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "musicas": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "nome": {
+                        "type": "string"
+                    },
+                    "artista": {
+                        "type": "string"
+                    },
+                    "album": {
+                        "type": "string"
+                    },
+                    "ano": {
+                        "type": "integer"
+                    },
+                    "genero": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "MusicaInput": {
+                "required": [
+                    "titulo",
+                    "artista"
+                ],
+                "properties": {
+                    "titulo": {
+                        "type": "string",
+                        "example": "Imagine"
+                    },
+                    "artista": {
+                        "type": "string",
+                        "example": "Jonh Lennon"
+                    },
+                    "album": {
+                        "type": "string",
+                        "example": "Imagine"
+                    },
+                    "ano": {
+                        "type": "integer",
+                        "example": "1971"
+                    },
+                    "genero": {
+                        "type": "string",
+                        "example": "Rock"
+                    }
+                },
+                "type": "object"
+            },
+            "MusicUpdateInput": {
+                "properties": {
+                    "titulo": {
+                        "type": "string",
+                        "example": "Imagine"
+                    },
+                    "artista": {
+                        "type": "string",
+                        "example": "Jonh Lennon"
+                    },
+                    "album": {
+                        "type": "string",
+                        "example": "Imagine"
+                    },
+                    "ano": {
+                        "type": "integer",
+                        "example": 1971
+                    },
+                    "genero": {
+                        "type": "string",
+                        "example": "Rock"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Músicas",
+            "description": "Músicas"
+        }
+    ]
+}

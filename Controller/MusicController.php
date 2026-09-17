@@ -4,6 +4,7 @@ namespace Controller;
 
 use Model\MusicModel;
 use Exception;
+
 use OpenApi\Attributes as OA;
 
 require_once __DIR__ . "/../Model/MusicModel.php";
@@ -22,12 +23,12 @@ class MusicController
 {
     public function __construct(private MusicModel $musicModel)
     {
-
     }
 
     public function ProcessRequest(string $method, ?string $id): void
     {
         header("Content-Type: application/json; charset=UTF-8");
+        
         if ($id === null) {
 
             match ($method) {
@@ -41,9 +42,9 @@ class MusicController
 
         match ($method) {
             "GET" => $this->show((int) $id),
-            "PUT" => $this->update((int) $id),
+            "PATCH" => $this->update((int) $id),
             "DELETE" => $this->delete((int) $id),
-            default => $this->methodNotAllowed(["GET", "PUT", "DELETE"])
+            default => $this->methodNotAllowed(["GET", "PATCH", "DELETE"])
         };
     }
 
@@ -54,7 +55,12 @@ class MusicController
         responses: [
             new OA\Response(
                 response: 200,
-                description: "Lista de músicas"
+                description: "Requisição concluída com sucesso",
+                content: new OA\JsonContent(ref: "#/components/schemas/musicas")
+            ),
+            new Oa\Response(
+                response: 404,
+                description: "Erro ao listar músicas",
             )
         ]
     )]
@@ -75,10 +81,26 @@ class MusicController
     }
 
     #[OA\Post(
-        path: "/musicas",
-        summary: "Cadastrar uma música",
-        tags: ["Músicas"]
-    )]
+    path: "/musicas",
+    summary: "Cadastrar uma música",
+    tags: ["Músicas"],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            ref: "#/components/schemas/MusicaInput"
+        )
+    ),
+    responses: [
+        new OA\Response(
+            response: 201,
+            description: "Música cadastrada com sucesso"
+        ),
+        new OA\Response(
+            response: 422,
+            description: "Título e artista são obrigatórios"
+        )
+    ]
+)]
     private function create(): void
     {
         try {
@@ -125,6 +147,18 @@ class MusicController
                 required: true,
                 schema: new OA\Schema(type: "integer")
             )
+            ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Informações da música obtidas com sucesso",
+                content: new OA\JsonContent(ref: "#/components/schemas/musicas")
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Música não encontrada"
+            ),
+            new OA\Response(response: 500, description: "Erro interno do servidor")
         ]
     )]
     private function show(int $id): void
@@ -146,7 +180,6 @@ class MusicController
             echo json_encode($musica);
 
         } catch (Exception $error) {
-
             http_response_code(500);
             echo json_encode([
                 "error" => $error->getMessage()
@@ -154,7 +187,7 @@ class MusicController
         }
     }
 
-    #[OA\Put(
+    #[OA\Patch(
         path: "/musicas/{id}",
         summary: "Atualizar uma música",
         tags: ["Músicas"],
@@ -165,7 +198,24 @@ class MusicController
                 required: true,
                 schema: new OA\Schema(type: "integer")
             )
-        ]
+            ],
+            responses: [
+                new OA\Response(
+                    response: 200,
+                    description: "Música atualizada com sucesso",
+                    content: new OA\JsonContent(ref: "#/components/schemas/musicas")
+                ),
+                new OA\Response(
+                    response: 404,
+                    description: "Música não encontrada"
+                ),
+                new OA\Response(
+                    response: 422,
+                    description: "Tentativa de atualização com dados inválidos",
+                    content: new oA\JsonContent(ref: "#/components/schemas/Error422")
+                ),
+                new OA\Response(response: 500, description: "Erro interno do servidor")
+            ]
     )]
     private function update(int $id): void
     {
@@ -224,6 +274,17 @@ class MusicController
                 required: true,
                 schema: new OA\Schema(type: "integer")
             )
+            ],
+        responses: [
+            new OA\Response(
+                response: 204,
+                description: "Música excluída com sucesso"
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Música não encontrada"
+            ),
+            new OA\Response(response: 500, description: "Erro interno do servidor")
         ]
     )]
     private function delete(int $id): void

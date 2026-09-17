@@ -32,12 +32,12 @@ try {
         $id
     );
 
-} catch (\Throwable $error) {
-
-    error_log($error->getMessage());
+}
+  catch (\Throwable $error) {
     http_response_code(500);
     echo json_encode([
-        "error" => "Erro interno."
+        "error" => $error->getMessage()
     ]);
 }
+
 
